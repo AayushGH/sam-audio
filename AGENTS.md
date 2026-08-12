@@ -9,7 +9,7 @@ importing the package and running the separation/codec pipeline in Python.
 
 ### Environment facts
 - Python 3.12; dependencies are installed into the **user site** (`~/.local/...`) and the package
-  is installed editable/normal via `pip install .`. The startup update script keeps this current.
+  is installed via `pip install --user .`. The install script in `.cursor/environment.json` keeps this current.
 - **CPU-only** VM (no GPU). Everything runs on CPU; expect the benign
   `WARNING[XFORMERS] ... can't load C++/CUDA extensions` and a `pynvml deprecated` warning — both
   are harmless on CPU.
@@ -21,14 +21,16 @@ importing the package and running the separation/codec pipeline in Python.
 A fresh `pip install .` resolves to `transformers 5.x` + `huggingface_hub 1.x`, which **breaks
 `SAMAudio.from_pretrained` / `SAMAudioProcessor.from_pretrained`** with
 `TypeError: _from_pretrained() missing ... 'proxies' and 'resume_download'` (hub 1.x changed the
-`ModelHubMixin._from_pretrained` calling convention). The startup update script pins
-`transformers>=4.54,<5` (pulls a compatible `huggingface_hub<1.0`, currently 4.57.6 / 0.36.2) to
-fix this. Do not "upgrade" transformers to 5.x.
+`ModelHubMixin._from_pretrained` calling convention). The install script in
+`.cursor/environment.json` pins `transformers>=4.54,<5` (pulls a compatible
+`huggingface_hub<1.0`, currently 4.57.6 / 0.36.2) to fix this. Do not "upgrade"
+transformers to 5.x.
 
 ### Lint (this is the CI check — see `.github/workflows/ci.yaml`)
 Run from repo root: `python3 -m ruff format --check .` and `python3 -m ruff check .`.
-Match the pre-commit-pinned tool version `ruff==0.12.0` (installed by the update script);
-newer ruff reformats Markdown code blocks in `README.md` and will fail `format --check`.
+Match the pre-commit-pinned tool version `ruff==0.12.0` (installed by the environment
+install script); newer ruff reformats Markdown code blocks in `README.md` and will fail
+`format --check`.
 
 ### Running the model (gated checkpoints)
 The pretrained checkpoints (`facebook/sam-audio-*`, `facebook/sam-audio-judge`, PE-AV span
